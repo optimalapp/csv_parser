@@ -1,27 +1,27 @@
 # frozen_string_literal: true
 
 require 'csv'
-
 module CsvParser
-  def get_data
-    @g_store = 'google'
-    @a_store = 'apple'
-    @itns = 'itunes'
-    get_urls do |url|
-      if url.include?(@g_store)
-        yield app_hash(url, @g_store)
-      elsif url.include?(@a_store) && url.include?(@itns)
-        yield app_hash(url, @a_store)
-      elsif url.include?('ios')
-        yield app_hash(url, @a_store)
-      elsif url.include?(@itns)
-      end
+  def self.import_apps
+    get_csv_data do |app_hash|
+      App.create(app_hash)
     end
   end
 
   private
 
-  def get_urls
+  def self.get_csv_data
+    get_urls do |url|
+      @numeric_id = url.scan(/\d+/).join
+      if @numeric_id.length >= 9
+        yield app_hash
+      else
+        yield app_hash(url)
+      end
+    end
+  end
+
+  def self.get_urls
     root_path = Rails.root.join('lib', 'assets')
     csv_files = File.path(root_path) + '/*.csv'
     Dir[csv_files].each do |file|
@@ -30,19 +30,16 @@ module CsvParser
     end
   end
 
-  def app_hash(url, store)
-    index = get_index(url)
+  def self.app_hash(url = nil)
     app = {}
-    app[:store_name] = store.to_s
-    app[:id_in_store] = store == @a_store ? get_id(url, index).match(/\d+/) : get_id(url, index)
-    app
-  end
-
-  def get_id(url, _index)
-    url.split('')[_index + 1..url.split('').length].join
-  end
-
-  def get_index(url)
-    url.split('').map.with_index { |d, i| d == '/' ? i : nil }.compact.last
+    if url.nil?
+      app[:store_name] = 'Apple Store'
+      app[:id_in_store] = @numeric_id
+      app
+    else
+      app[:store_name] = 'Google Play'
+      app[:id_in_store] = url.scan(/^\w+.\w+.\w+.\w+\w+/).join
+      app
+    end
   end
 end
