@@ -2,6 +2,6 @@
 
 namespace :apps do
   task import: :environment do
-    App.import_apps('lib/assets')
+    App.import_apps_from('lib/assets')
   end
 end
