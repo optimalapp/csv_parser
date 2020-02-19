@@ -4,7 +4,8 @@ require 'csv'
 module CsvParser
   def self.import_apps
     get_csv_data do |app_hash|
-      App.create(app_hash)
+      app = App.find_by(app_hash)
+      App.create(app_hash) if app.nil?
     end
   end
 
@@ -46,7 +47,7 @@ module CsvParser
   def self.get_id(_url)
     regexp = /\w+\.\w+\.?\w+\.?\w+\.?\w+\.?\w+\.?\w+\.?\w+\.?\w+\.?\w+/
     _url = get_short_url(_url, get_index(_url, '/', 3))
-    _url.match(regexp)
+    _url.match(regexp).to_s
   end
 
   def self.get_index(url, char, _nr)
