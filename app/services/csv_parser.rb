@@ -2,7 +2,8 @@
 
 require 'csv'
 module CsvParser
-  def self.import_apps
+  def self.import_apps(_folder_path)
+    @folder_path = _folder_path
     get_urls_data do |app_hash|
       app = App.find_by(app_hash)
       App.create(app_hash) if app.nil?
@@ -30,23 +31,24 @@ module CsvParser
     end
   end
 
-  def self.csv_files
-    root_path = Rails.root.join('lib', 'assets')
+  def self.csv_files(_folder_path)
+    _folder_path ||= @folder_path
+    root_path = Rails.root.join(_folder_path)
     csvs = File.path(root_path) + '/*.csv'
     Dir[csvs]
   end
 
-  private
-
   def self.get_urls(_specific_file = nil)
     if _specific_file.nil?
-      csv_files.each do |_file|
+      csv_files(@folder_path).each do |_file|
         cleaned_urls(_file).each { |l| yield l }
       end
     else
       cleaned_urls(_specific_file)
     end
   end
+
+  private
 
   def self.cleaned_urls(file)
     File.readlines(file).map { |r| r.split.join.gsub(',', '') }.map { |l| l.include?('https') ? l : nil }.compact
