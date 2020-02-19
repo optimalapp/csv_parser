@@ -44,48 +44,9 @@ module CsvParser
   end
 
   def self.get_id(_url)
-    regexp = /\w+\.\w+/
-    last_match = ''
+    regexp = /\w+\.\w+\.?\w+\.?\w+\.?\w+\.?\w+\.?\w+\.?\w+\.?\w+\.?\w+/
     _url = get_short_url(_url, get_index(_url, '/', 3))
-    if _url.match(regexp)
-      last_match = _url.match(regexp).to_s
-      regexp = /\w+\.\w+\.\w+/
-      if _url.match(regexp)
-        last_match = _url.match(regexp).to_s
-        regexp = /\w+\.\w+\.\w+\.\w+/
-        if _url.match(regexp)
-          last_match = _url.match(regexp).to_s
-          regexp = /\w+\.\w+\.\w+\.\w+\.\w+/
-          if _url.match(regexp)
-            last_match = _url.match(regexp).to_s
-            regexp = /\w+\.\w+\.\w+\.\w+\.\w+/
-            if _url.match(regexp)
-              last_match = _url.match(regexp).to_s
-              regexp = /\w+\.\w+\.\w+\.\w+\.\w+\.\w+/
-              if _url.match(regexp)
-                last_match = _url.match(regexp).to_s
-                regexp = /\w+\.\w+\.\w+\.\w+\.\w+\.\w+\.\w+\.\w+/
-                if _url.match(regexp)
-                  _url.match(regexp).to_s
-                else
-                  last_match
-                end
-              else
-                last_match
-              end
-            else
-              last_match
-            end
-          else
-            last_match
-          end
-        else
-          last_match
-        end
-      else
-        last_match
-      end
-    end
+    _url.match(regexp)
   end
 
   def self.get_index(url, char, _nr)
