@@ -38,11 +38,18 @@ module CsvParser
 
   private
 
-  def self.get_urls
-    csv_files.each do |file|
-      cleaned = File.readlines(file).map { |r| r.split.join.gsub(',', '') }.map { |l| l.include?('https') ? l : nil }.compact
-      cleaned.each { |l| yield l }
+  def self.get_urls(_specific_file = nil)
+    if _specific_file.nil?
+      csv_files.each do |_file|
+        cleaned_urls(_file).each { |l| yield l }
+      end
+    else
+      cleaned_urls(_specific_file)
     end
+  end
+
+  def self.cleaned_urls(file)
+    File.readlines(file).map { |r| r.split.join.gsub(',', '') }.map { |l| l.include?('https') ? l : nil }.compact
   end
 
   def self.app_hash(url = nil)
