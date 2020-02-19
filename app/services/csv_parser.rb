@@ -3,29 +3,43 @@
 require 'csv'
 module CsvParser
   def self.import_apps
-    get_csv_data do |app_hash|
+    get_urls_data do |app_hash|
       app = App.find_by(app_hash)
       App.create(app_hash) if app.nil?
     end
   end
 
-  private
-
-  def self.get_csv_data
-    get_urls do |url|
-      @numeric_id = url.scan(/\d+/).join
-      if @numeric_id.length >= 9
-        yield app_hash
+  def self.get_urls_data(_specific_url = nil)
+    length = 9
+    if _specific_url.nil?
+      get_urls do |_url|
+        @numeric_id = _url.scan(/\d+/).join
+        if @numeric_id.length >= length
+          yield app_hash
+        else
+          yield app_hash(_url)
+        end
+      end
+    else
+      @numeric_id = _specific_url.scan(/\d+/).join
+      if @numeric_id.length >= length
+        app_hash
       else
-        yield app_hash(url)
+        app_hash(_specific_url)
       end
     end
   end
 
-  def self.get_urls
+  def self.csv_files
     root_path = Rails.root.join('lib', 'assets')
-    csv_files = File.path(root_path) + '/*.csv'
-    Dir[csv_files].each do |file|
+    csvs = File.path(root_path) + '/*.csv'
+    Dir[csvs]
+  end
+
+  private
+
+  def self.get_urls
+    csv_files.each do |file|
       cleaned = File.readlines(file).map { |r| r.split.join.gsub(',', '') }.map { |l| l.include?('https') ? l : nil }.compact
       cleaned.each { |l| yield l }
     end
