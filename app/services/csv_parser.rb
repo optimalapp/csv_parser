@@ -2,32 +2,26 @@
 
 require 'csv'
 module CsvParser
-  def self.import_apps(_folder_path)
+  def self.get_data_from_csv_urls(_folder_path)
     @folder_path = _folder_path
-    get_urls_data do |app_hash|
-      app = App.find_by(app_hash)
-      App.create(app_hash) if app.nil?
+    length = 9
+    get_processed_urls do |_url|
+      @numeric_id = _url.scan(/\d+/).join
+      if @numeric_id.length >= length
+        yield app_hash
+      else
+        yield app_hash(_url)
+      end
     end
   end
 
-  def self.get_urls_data(_specific_url = nil)
+  def self.get_data_from_url(_url)
     length = 9
-    if _specific_url.nil?
-      get_urls do |_url|
-        @numeric_id = _url.scan(/\d+/).join
-        if @numeric_id.length >= length
-          yield app_hash
-        else
-          yield app_hash(_url)
-        end
-      end
+    @numeric_id = _url.scan(/\d+/).join
+    if @numeric_id.length >= length
+      app_hash
     else
-      @numeric_id = _specific_url.scan(/\d+/).join
-      if @numeric_id.length >= length
-        app_hash
-      else
-        app_hash(_specific_url)
-      end
+      app_hash(_specific_url)
     end
   end
 
@@ -38,7 +32,7 @@ module CsvParser
     Dir[csvs]
   end
 
-  def self.get_urls(_specific_file = nil)
+  def self.get_processed_urls(_specific_file = nil)
     if _specific_file.nil?
       csv_files(@folder_path).each do |_file|
         cleaned_urls(_file).each { |l| yield l }
