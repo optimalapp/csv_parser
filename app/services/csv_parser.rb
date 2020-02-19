@@ -33,11 +33,11 @@ module CsvParser
   def self.app_hash(url = nil)
     app = {}
     if url.nil?
-      app[:store_name] = 'Apple Store'
+      app[:store_name] = 'iOs'
       app[:id_in_store] = @numeric_id
       app
     else
-      app[:store_name] = 'Google Play'
+      app[:store_name] = 'Google'
       app[:id_in_store] = get_id(url)
       app
     end
