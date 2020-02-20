@@ -27,7 +27,7 @@ module CsvParser
     end
   end
 
-  def self.csv_files(_folder_path)
+  def self.csv_files(_folder_path = nil)
     _folder_path ||= @folder_path
     root_path = Rails.root.join(_folder_path)
     csvs = File.path(root_path) + '/*.csv'
@@ -36,7 +36,7 @@ module CsvParser
 
   def self.get_processed_urls(_specific_file = nil)
     if _specific_file.nil?
-      csv_files(@folder_path).each do |_file|
+      csv_files.each do |_file|
         cleaned_urls(_file).each { |l| yield l }
       end
     else
