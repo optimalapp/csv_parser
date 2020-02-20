@@ -45,6 +45,7 @@ RSpec.describe CsvParser, type: :service do
                  'https://play.google.com/store/apps/details?id=air.com.buffalo_studios.newflashbingo&hl=en',
                  'https://play.google.com/store/apps/details?id=com.kabam.marvelbattle&hl=en',
                  'https://play.google.com/store/apps/details?id=com.smallgiantgames.empires&hl=en']
+
     results = [{ store_name: 'Google', id_in_store: 'com.netease.l10' },
                { store_name: 'Google', id_in_store: 'com.us.danmemo' },
                { store_name: 'Google', id_in_store: 'com.gameone.tlbb' },
