@@ -1,0 +1,26 @@
+<div class="main_container">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Store</th>
+              <th>ID in Store</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @apps.each do |app| %>
+              <tr>
+                <td><%= app[:id] %></td>
+                <td><%= app[:store_name] %></td>
+                <td><%= app[:id_in_store] %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
