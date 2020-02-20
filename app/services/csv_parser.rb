@@ -2,12 +2,15 @@
 
 require 'csv'
 module CsvParser
+  NR_ID_REGEXP = /\d\d?\d?\d?\d?\d?\d?\d?\d?\d?\d?/.freeze
+  NAME_ID_REGEXP = /\w+\.\w+\.?\w+\.?\w+\.?\w+\.?\w+\.?\w+\.?\w+\.?\w+\.?\w+/.freeze
+  ID_LENGTH = 9
+
   def self.get_data_from_csv_urls(_folder_path)
     @folder_path = _folder_path
-    length = 9
     get_processed_urls do |_url|
-      @numeric_id = _url.scan(/\d+/).join
-      if @numeric_id.length >= length
+      @numeric_id = _url.match(NR_ID_REGEXP).to_s
+      if @numeric_id.length >= ID_LENGTH
         yield app_hash
       else
         yield app_hash(_url)
@@ -16,12 +19,11 @@ module CsvParser
   end
 
   def self.get_data_from_url(_url)
-    length = 9
-    @numeric_id = _url.scan(/\d+/).join
-    if @numeric_id.length >= length
+    @numeric_id = _url.match(NR_ID_REGEXP).to_s
+    if @numeric_id.length >= ID_LENGTH
       app_hash
     else
-      app_hash(_specific_url)
+      app_hash(_url)
     end
   end
 
@@ -62,9 +64,8 @@ module CsvParser
   end
 
   def self.get_id(_url)
-    regexp = /\w+\.\w+\.?\w+\.?\w+\.?\w+\.?\w+\.?\w+\.?\w+\.?\w+\.?\w+/
     _url = get_short_url(_url, get_index(_url, '/', 3))
-    _url.match(regexp).to_s
+    _url.match(NAME_ID_REGEXP).to_s
   end
 
   def self.get_index(url, char, _nr)
