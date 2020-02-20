@@ -8,7 +8,7 @@
 ```
 - rake apps:import #from csv file located in lib/assets
 ```
-#### **Run tests
+#### **Run tests**
 ```
 - rspec
 ```
